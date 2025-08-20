@@ -1,5 +1,3 @@
----
-
 # TProxy
 
 TProxy is a lightweight **Proxy Manager** for Linux that lets you easily manage proxies for:
@@ -13,7 +11,6 @@ TProxy is a lightweight **Proxy Manager** for Linux that lets you easily manage 
 
 No more manual editing of configs — set, disable, show, toggle, and uninstall proxies with a simple menu.
 
----
 
 ## 🚀 Installation
 
@@ -32,7 +29,6 @@ This will:
 * Enable **bash completion** under `/etc/bash_completion.d/`
 * Let you call `tproxy` from anywhere in your terminal
 
----
 
 ## 🛠 Usage
 
@@ -55,8 +51,6 @@ tproxy
 ==========================
 ```
 
----
-
 ## 🔑 Features
 
 ### 1. Set Proxy
@@ -75,8 +69,6 @@ Example:
 Enter proxy URL: http://127.0.0.1:8080
 ```
 
----
-
 ### 2. Disable Proxy
 
 Removes proxy settings from:
@@ -87,13 +79,11 @@ Removes proxy settings from:
 * Git
 * Or all at once
 
----
-
 ### 3. Show Current Proxy
 
 Displays the active proxy settings for **all managed components**.
 
----
+
 
 ### 4. 🔄 Toggle Proxy
 
@@ -108,7 +98,6 @@ The last proxy you set is saved in:
 ~/.tproxy.conf
 ```
 
----
 
 ### 5. ❌ Uninstall TProxy
 
@@ -125,7 +114,6 @@ This will:
 * Remove `/usr/local/bin/tproxy`
 * Remove bash completion
 
----
 
 ## ⚡ Non-Interactive Usage
 
@@ -146,7 +134,6 @@ tproxy [TAB]
 # → set disable toggle show uninstall help
 ```
 
----
 
 ## 🔒 Notes
 
@@ -154,7 +141,6 @@ tproxy [TAB]
 * `System proxy` changes require **logout/login** to take effect.
 * Proxies are stored in `~/.tproxy.conf` for toggle functionality.
 
----
 
 ## 🧑‍💻 Author
 
@@ -162,11 +148,8 @@ tproxy [TAB]
 📧 [tisonkironget@gmail.com](mailto:tisonkironget@gmail.com)
 🌍 [GitHub Profile](https://github.com/TisoneK)
 
----
 
 ## 📜 License
 
 MIT License – feel free to use, modify, and share.
-
----
 
