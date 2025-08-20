@@ -202,7 +202,7 @@ fi
 
 while true; do
     clear
-    echo "===== TProxy Manager ====="
+    echo "===== TProxy Manager v1.0.0 ====="
     echo "1) Set Proxy"
     echo "2) Disable Proxy"
     echo "3) Show Current Proxy"

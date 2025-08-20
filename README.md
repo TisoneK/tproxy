@@ -1,15 +1,8 @@
-Perfect 👍 thanks for sharing the original README.
-
-We’ll **keep the same tone & structure**, but just extend it to include:
-
-* The new **`uninstall` command**
-* The **bash completion** feature we added in `install.sh`
-
-Here’s the **updated README**:
-
 ---
 
 # TProxy
+# TProxy
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
 
 TProxy is a lightweight **Proxy Manager** for Linux that lets you easily manage proxies for:
 
@@ -178,6 +171,4 @@ tproxy [TAB]
 MIT License – feel free to use, modify, and share.
 
 ---
-
-👉 Do you want me to also add a **“Demo GIF / screenshot section”** in the README (showing the menu in action), or keep it clean and text-only?
 
