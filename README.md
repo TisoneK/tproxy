@@ -1,8 +1,6 @@
 ---
 
 # TProxy
-# TProxy
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
 
 TProxy is a lightweight **Proxy Manager** for Linux that lets you easily manage proxies for:
 
