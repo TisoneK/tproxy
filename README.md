@@ -1,35 +1,33 @@
----
+# TProxy
 
-# tproxy
+TProxy is a lightweight **Proxy Manager** for Linux that lets you easily manage proxies for:
 
-A lightweight **Proxy Manager** for Linux that helps you quickly **set, disable, toggle, and view** proxy settings for:
+- 🌐 **Terminal session**
+- 📦 **APT package manager**
+- 🖥 **System-wide environment**
+- 🛠 **Git**
+- 🔄 **One-key Toggle (ON/OFF)**
 
-* 🌐 **Terminal (session environment variables)**
-* 📦 **APT (package manager)**
-* 🖥️ **System-wide (/etc/environment)**
-
-Supports **interactive menu** and **non-interactive commands**.
+No more manual editing of configs — set, disable, show, and toggle proxies with a simple menu.
 
 ---
 
 ## 🚀 Installation
 
-Clone the repo and install:
+Clone the repo and run the installer:
 
 ```bash
 git clone https://github.com/TisoneK/tproxy.git
 cd tproxy
 chmod +x install.sh
 ./install.sh
-```
+````
 
-This installs `tproxy` into `/usr/local/bin/` so you can run it globally.
+This will install `tproxy` globally so you can call it from anywhere.
 
 ---
 
-## 🎮 Usage
-
-### Interactive Mode
+## 🛠 Usage
 
 Run:
 
@@ -37,82 +35,101 @@ Run:
 tproxy
 ```
 
-You’ll get a simple menu:
+### Main Menu
 
 ```
-===== Proxy Manager =====
+===== TProxy Manager =====
 1) Set Proxy
 2) Disable Proxy
-3) Toggle Proxy
-4) Show Current Proxy
+3) Show Current Proxy
+4) Toggle Proxy
 5) Exit
-=========================
+==========================
 ```
 
 ---
 
-### Non-Interactive Mode
+## 🔑 Features
 
-You can also run direct commands without menus.
+### 1. Set Proxy
 
-#### Set Proxy
+Choose where to set the proxy:
+
+* **Terminal** → temporary for current shell
+* **APT** → `/etc/apt/apt.conf.d/proxy.conf`
+* **System** → `/etc/environment`
+* **Git** → `git config --global`
+* **All** → apply everywhere at once
+
+Example:
 
 ```bash
-tproxy set terminal http://192.168.145.154:44355
-tproxy set apt http://192.168.145.154:44355
-tproxy set system http://192.168.145.154:44355
-tproxy set all http://192.168.145.154:44355
+Enter proxy URL: http://127.0.0.1:8080
 ```
 
-#### Disable Proxy
+### 2. Disable Proxy
+
+Removes proxy settings from:
+
+* Terminal
+* APT
+* System
+* Git
+* Or all at once
+
+### 3. Show Current Proxy
+
+Displays the active proxy settings for **all managed components**.
+
+### 4. 🔄 Toggle Proxy
+
+One keypress to switch between:
+
+* **Proxy ON** → applies last saved proxy everywhere
+* **Proxy OFF** → disables proxy everywhere
+
+The last proxy you set is saved in:
+
+```
+~/.tproxy.conf
+```
+
+---
+
+## ⚡ Non-Interactive Usage
+
+You can also run commands directly:
 
 ```bash
-tproxy disable terminal
-tproxy disable apt
-tproxy disable system
-tproxy disable all
-```
-
-#### Toggle Proxy
-
-```bash
-tproxy toggle
-```
-
-* If a proxy is active → disables it.
-* If no proxy is active → re-applies last saved config from `~/.proxy_manager.conf`.
-
-#### Show Current Proxy
-
-```bash
-tproxy show
+tproxy set all http://127.0.0.1:8080   # Set proxy everywhere
+tproxy disable all                     # Disable proxy everywhere
+tproxy toggle                          # Toggle proxy ON/OFF
+tproxy show                            # Show current proxy status
 ```
 
 ---
 
-## ⚙️ Requirements
+## 🔒 Notes
 
-* Linux system
-* `bash` shell
-* `sudo` privileges (for APT and system-wide proxy changes)
-
----
-
-## 📂 Files
-
-* `tproxy.sh` → Main script
-* `install.sh` → Installer (copies script to `/usr/local/bin/tproxy`)
-* `~/.proxy_manager.conf` → Stores last used proxy for toggle functionality
+* `APT` and `System-wide` changes require **sudo privileges**.
+* `System proxy` changes require **logout/login** to take effect.
+* Proxies are stored in `~/.tproxy.conf` for toggle functionality.
 
 ---
 
-## 📝 License
+## 🧑‍💻 Author
 
-MIT License – free to use, modify, and distribute.
+**Tisone Kironget**
+📧 [tisonkironget@gmail.com](mailto:tisonkironget@gmail.com)
+🌍 [GitHub Profile](https://github.com/TisoneK)
 
 ---
 
-🔥 With **tproxy**, switching proxies is now as easy as **one command**.
+## 📜 License
+
+MIT License – feel free to use, modify, and share.
+
+```
 
 ---
 

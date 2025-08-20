@@ -1,13 +1,27 @@
 #!/bin/bash
-# tproxy - Terminal Proxy Manager (Terminal + APT + System)
-# Supports both interactive menu & non-interactive CLI
+# TProxy - Terminal, APT, System & Git Proxy Manager
 
 PROXY_FILE="/etc/apt/apt.conf.d/proxy.conf"
 ENV_FILE="/etc/environment"
-CONF_FILE="$HOME/.proxy_manager.conf"
+CONFIG_FILE="$HOME/.tproxy.conf"
 
-# ---------------- Functions ---------------- #
+# Save proxy to config
+save_proxy() {
+    echo "$1" > "$CONFIG_FILE"
+}
 
+# Load last proxy from config
+load_proxy() {
+    if [[ -f $CONFIG_FILE ]]; then
+        cat "$CONFIG_FILE"
+    else
+        echo ""
+    fi
+}
+
+# ------------------------
+# Proxy Setters
+# ------------------------
 set_proxy_terminal() {
     export http_proxy=$1
     export https_proxy=$1
@@ -27,6 +41,15 @@ set_proxy_system() {
     echo "[+] Proxy set system-wide (requires logout/login)."
 }
 
+set_proxy_git() {
+    git config --global http.proxy "$1"
+    git config --global https.proxy "$1"
+    echo "[+] Proxy set for Git."
+}
+
+# ------------------------
+# Proxy Disablers
+# ------------------------
 disable_proxy_terminal() {
     unset http_proxy https_proxy
     echo "[+] Proxy disabled for terminal session."
@@ -42,6 +65,15 @@ disable_proxy_system() {
     echo "[+] Proxy disabled system-wide (requires logout/login)."
 }
 
+disable_proxy_git() {
+    git config --global --unset http.proxy
+    git config --global --unset https.proxy
+    echo "[+] Proxy disabled for Git."
+}
+
+# ------------------------
+# Show Current
+# ------------------------
 show_current() {
     clear
     echo "=== Current Proxy Status ==="
@@ -56,53 +88,58 @@ show_current() {
     echo ""
     echo "System proxy (from $ENV_FILE):"
     grep -E "http_proxy|https_proxy" $ENV_FILE || echo "Not set"
+    echo ""
+    echo "Git proxy:"
+    git config --get http.proxy || echo "Not set"
+    git config --get https.proxy || echo "Not set"
 }
 
-save_last_proxy() {
-    echo "$1" > "$CONF_FILE"
-}
-
-load_last_proxy() {
-    [[ -f "$CONF_FILE" ]] && cat "$CONF_FILE"
-}
-
+# ------------------------
+# Toggle Proxy
+# ------------------------
 toggle_proxy() {
-    LAST_PROXY=$(load_last_proxy)
-    if [[ -z "$LAST_PROXY" ]]; then
-        echo "[!] No saved proxy found. Please set one first."
-        return
-    fi
-
-    if [[ -z "$http_proxy" && ! -f $PROXY_FILE && -z $(grep -E "http_proxy|https_proxy" $ENV_FILE) ]]; then
-        echo "[*] No proxy detected → Enabling $LAST_PROXY"
-        set_proxy_terminal "$LAST_PROXY"
-        set_proxy_apt "$LAST_PROXY"
-        set_proxy_system "$LAST_PROXY"
-    else
-        echo "[*] Proxy detected → Disabling"
+    local CURRENT=$(git config --get http.proxy)
+    if [[ -n "$CURRENT" ]]; then
+        echo "[*] Proxy currently enabled. Disabling..."
         disable_proxy_terminal
         disable_proxy_apt
         disable_proxy_system
+        disable_proxy_git
+    else
+        local LAST_PROXY=$(load_proxy)
+        if [[ -z "$LAST_PROXY" ]]; then
+            read -p "Enter proxy URL: " LAST_PROXY
+            save_proxy "$LAST_PROXY"
+        fi
+        echo "[*] Enabling proxy: $LAST_PROXY"
+        set_proxy_terminal "$LAST_PROXY"
+        set_proxy_apt "$LAST_PROXY"
+        set_proxy_system "$LAST_PROXY"
+        set_proxy_git "$LAST_PROXY"
     fi
+    read -p "Press Enter to continue..."
 }
 
-# ---------------- Menus ---------------- #
-
+# ------------------------
+# Submenus
+# ------------------------
 submenu_set() {
     clear
     echo "=== Set Proxy ==="
     echo "1) Terminal"
     echo "2) APT"
     echo "3) System"
-    echo "4) All"
-    echo "5) Back"
-    read -p "Choose [1-5]: " opt
+    echo "4) Git"
+    echo "5) All"
+    echo "6) Back"
+    read -p "Choose [1-6]: " opt
     case $opt in
-        1) read -p "Enter proxy URL: " PROXY; set_proxy_terminal "$PROXY"; save_last_proxy "$PROXY" ;;
-        2) read -p "Enter proxy URL: " PROXY; set_proxy_apt "$PROXY"; save_last_proxy "$PROXY" ;;
-        3) read -p "Enter proxy URL: " PROXY; set_proxy_system "$PROXY"; save_last_proxy "$PROXY" ;;
-        4) read -p "Enter proxy URL: " PROXY; set_proxy_terminal "$PROXY"; set_proxy_apt "$PROXY"; set_proxy_system "$PROXY"; save_last_proxy "$PROXY" ;;
-        5) return ;;
+        1) read -p "Enter proxy URL: " PROXY; set_proxy_terminal "$PROXY"; save_proxy "$PROXY" ;;
+        2) read -p "Enter proxy URL: " PROXY; set_proxy_apt "$PROXY"; save_proxy "$PROXY" ;;
+        3) read -p "Enter proxy URL: " PROXY; set_proxy_system "$PROXY"; save_proxy "$PROXY" ;;
+        4) read -p "Enter proxy URL: " PROXY; set_proxy_git "$PROXY"; save_proxy "$PROXY" ;;
+        5) read -p "Enter proxy URL: " PROXY; set_proxy_terminal "$PROXY"; set_proxy_apt "$PROXY"; set_proxy_system "$PROXY"; set_proxy_git "$PROXY"; save_proxy "$PROXY" ;;
+        6) return ;;
         *) echo "[!] Invalid choice" ;;
     esac
     read -p "Press Enter to continue..."
@@ -114,83 +151,43 @@ submenu_disable() {
     echo "1) Terminal"
     echo "2) APT"
     echo "3) System"
-    echo "4) All"
-    echo "5) Back"
-    read -p "Choose [1-5]: " opt
+    echo "4) Git"
+    echo "5) All"
+    echo "6) Back"
+    read -p "Choose [1-6]: " opt
     case $opt in
         1) disable_proxy_terminal ;;
         2) disable_proxy_apt ;;
         3) disable_proxy_system ;;
-        4) disable_proxy_terminal; disable_proxy_apt; disable_proxy_system ;;
-        5) return ;;
+        4) disable_proxy_git ;;
+        5) disable_proxy_terminal; disable_proxy_apt; disable_proxy_system; disable_proxy_git ;;
+        6) return ;;
         *) echo "[!] Invalid choice" ;;
     esac
     read -p "Press Enter to continue..."
 }
 
-main_menu() {
-    while true; do
-        clear
-        echo "===== Proxy Manager (tproxy) ====="
-        echo "1) Set Proxy"
-        echo "2) Disable Proxy"
-        echo "3) Toggle Proxy"
-        echo "4) Show Current Proxy"
-        echo "5) Exit"
-        echo "=================================="
-        read -p "Choose [1-5]: " choice
+# ------------------------
+# Main Menu
+# ------------------------
+while true; do
+    clear
+    echo "===== TProxy Manager ====="
+    echo "1) Set Proxy"
+    echo "2) Disable Proxy"
+    echo "3) Show Current Proxy"
+    echo "4) Toggle Proxy"
+    echo "5) Exit"
+    echo "=========================="
+    read -p "Choose [1-5]: " choice
 
-        case $choice in
-            1) submenu_set ;;
-            2) submenu_disable ;;
-            3) toggle_proxy; read -p "Press Enter to continue..." ;;
-            4) show_current; read -p "Press Enter to continue..." ;;
-            5) clear; echo "Goodbye!"; exit 0 ;;
-            *) echo "[!] Invalid choice"; sleep 1 ;;
-        esac
-    done
-}
-
-# ---------------- CLI Parser ---------------- #
-
-if [[ $# -gt 0 ]]; then
-    case $1 in
-        set)
-            [[ $# -lt 3 ]] && { echo "Usage: tproxy set {terminal|apt|system|all} URL"; exit 1; }
-            save_last_proxy "$3"
-            case $2 in
-                terminal) set_proxy_terminal "$3" ;;
-                apt) set_proxy_apt "$3" ;;
-                system) set_proxy_system "$3" ;;
-                all) set_proxy_terminal "$3"; set_proxy_apt "$3"; set_proxy_system "$3" ;;
-                *) echo "[!] Invalid target. Use terminal|apt|system|all" ;;
-            esac
-            ;;
-        disable)
-            [[ $# -lt 2 ]] && { echo "Usage: tproxy disable {terminal|apt|system|all}"; exit 1; }
-            case $2 in
-                terminal) disable_proxy_terminal ;;
-                apt) disable_proxy_apt ;;
-                system) disable_proxy_system ;;
-                all) disable_proxy_terminal; disable_proxy_apt; disable_proxy_system ;;
-                *) echo "[!] Invalid target. Use terminal|apt|system|all" ;;
-            esac
-            ;;
-        toggle)
-            toggle_proxy
-            ;;
-        show)
-            show_current
-            ;;
-        *)
-            echo "Usage:"
-            echo "  tproxy set {terminal|apt|system|all} URL"
-            echo "  tproxy disable {terminal|apt|system|all}"
-            echo "  tproxy toggle"
-            echo "  tproxy show"
-            ;;
+    case $choice in
+        1) submenu_set ;;
+        2) submenu_disable ;;
+        3) show_current; read -p "Press Enter to continue..." ;;
+        4) toggle_proxy ;;
+        5) clear; echo "Goodbye!"; exit 0 ;;
+        *) echo "[!] Invalid choice"; sleep 1 ;;
     esac
-else
-    main_menu
-fi
+done
 
