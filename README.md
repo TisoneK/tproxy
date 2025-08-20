@@ -1,14 +1,26 @@
+Perfect 👍 thanks for sharing the original README.
+
+We’ll **keep the same tone & structure**, but just extend it to include:
+
+* The new **`uninstall` command**
+* The **bash completion** feature we added in `install.sh`
+
+Here’s the **updated README**:
+
+---
+
 # TProxy
 
 TProxy is a lightweight **Proxy Manager** for Linux that lets you easily manage proxies for:
 
-- 🌐 **Terminal session**
-- 📦 **APT package manager**
-- 🖥 **System-wide environment**
-- 🛠 **Git**
-- 🔄 **One-key Toggle (ON/OFF)**
+* 🌐 **Terminal session**
+* 📦 **APT package manager**
+* 🖥 **System-wide environment**
+* 🛠 **Git**
+* 🔄 **One-key Toggle (ON/OFF)**
+* ❌ **Easy Uninstall**
 
-No more manual editing of configs — set, disable, show, and toggle proxies with a simple menu.
+No more manual editing of configs — set, disable, show, toggle, and uninstall proxies with a simple menu.
 
 ---
 
@@ -21,9 +33,13 @@ git clone https://github.com/TisoneK/tproxy.git
 cd tproxy
 chmod +x install.sh
 ./install.sh
-````
+```
 
-This will install `tproxy` globally so you can call it from anywhere.
+This will:
+
+* Install `tproxy` globally (`/usr/local/bin/tproxy`)
+* Enable **bash completion** under `/etc/bash_completion.d/`
+* Let you call `tproxy` from anywhere in your terminal
 
 ---
 
@@ -44,6 +60,7 @@ tproxy
 3) Show Current Proxy
 4) Toggle Proxy
 5) Exit
+6) Uninstall TProxy
 ==========================
 ```
 
@@ -67,6 +84,8 @@ Example:
 Enter proxy URL: http://127.0.0.1:8080
 ```
 
+---
+
 ### 2. Disable Proxy
 
 Removes proxy settings from:
@@ -77,9 +96,13 @@ Removes proxy settings from:
 * Git
 * Or all at once
 
+---
+
 ### 3. Show Current Proxy
 
 Displays the active proxy settings for **all managed components**.
+
+---
 
 ### 4. 🔄 Toggle Proxy
 
@@ -96,6 +119,23 @@ The last proxy you set is saved in:
 
 ---
 
+### 5. ❌ Uninstall TProxy
+
+Quickly remove TProxy:
+
+```bash
+tproxy uninstall
+```
+
+This will:
+
+* Disable all proxies
+* Remove `~/.tproxy.conf`
+* Remove `/usr/local/bin/tproxy`
+* Remove bash completion
+
+---
+
 ## ⚡ Non-Interactive Usage
 
 You can also run commands directly:
@@ -105,6 +145,14 @@ tproxy set all http://127.0.0.1:8080   # Set proxy everywhere
 tproxy disable all                     # Disable proxy everywhere
 tproxy toggle                          # Toggle proxy ON/OFF
 tproxy show                            # Show current proxy status
+tproxy uninstall                       # Remove TProxy
+```
+
+With **bash completion** you can tab-complete commands:
+
+```bash
+tproxy [TAB]
+# → set disable toggle show uninstall help
 ```
 
 ---
@@ -129,7 +177,7 @@ tproxy show                            # Show current proxy status
 
 MIT License – feel free to use, modify, and share.
 
-```
-
 ---
+
+👉 Do you want me to also add a **“Demo GIF / screenshot section”** in the README (showing the menu in action), or keep it clean and text-only?
 

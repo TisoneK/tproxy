@@ -4,6 +4,7 @@
 PROXY_FILE="/etc/apt/apt.conf.d/proxy.conf"
 ENV_FILE="/etc/environment"
 CONFIG_FILE="$HOME/.tproxy.conf"
+SCRIPT_PATH="/usr/local/bin/tproxy"
 
 # Save proxy to config
 save_proxy() {
@@ -121,6 +122,31 @@ toggle_proxy() {
 }
 
 # ------------------------
+# Uninstall Functionality
+# ------------------------
+uninstall_tproxy() {
+    echo "[*] Uninstalling TProxy..."
+
+    # Disable all proxies before removal
+    disable_proxy_terminal
+    disable_proxy_apt
+    disable_proxy_system
+    disable_proxy_git
+
+    # Remove config file
+    rm -f "$CONFIG_FILE"
+
+    # Remove installed script (if running from /usr/local/bin)
+    if [[ -f "$SCRIPT_PATH" ]]; then
+        sudo rm -f "$SCRIPT_PATH"
+        echo "[+] Removed $SCRIPT_PATH"
+    fi
+
+    echo "[+] TProxy has been fully uninstalled."
+    exit 0
+}
+
+# ------------------------
 # Submenus
 # ------------------------
 submenu_set() {
@@ -168,8 +194,12 @@ submenu_disable() {
 }
 
 # ------------------------
-# Main Menu
+# Main Menu / CLI
 # ------------------------
+if [[ "$1" == "uninstall" ]]; then
+    uninstall_tproxy
+fi
+
 while true; do
     clear
     echo "===== TProxy Manager ====="
@@ -178,8 +208,9 @@ while true; do
     echo "3) Show Current Proxy"
     echo "4) Toggle Proxy"
     echo "5) Exit"
+    echo "6) Uninstall TProxy"
     echo "=========================="
-    read -p "Choose [1-5]: " choice
+    read -p "Choose [1-6]: " choice
 
     case $choice in
         1) submenu_set ;;
@@ -187,6 +218,7 @@ while true; do
         3) show_current; read -p "Press Enter to continue..." ;;
         4) toggle_proxy ;;
         5) clear; echo "Goodbye!"; exit 0 ;;
+        6) uninstall_tproxy ;;
         *) echo "[!] Invalid choice"; sleep 1 ;;
     esac
 done
